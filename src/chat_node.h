@@ -21,6 +21,5 @@ typedef struct chat_node_list{
 } ChatNodeList; 
 
 
-int get_square(int x);
 
 #endif // CHAT_NODE_H

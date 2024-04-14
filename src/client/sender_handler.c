@@ -39,10 +39,9 @@ void* handle_sender(void* arg){
     while(1){
         get_user_input(input);
         
-        Message msg;
-        msg.type = NOTE;
+        Message msg = parse_message(input);
         msg.chat_node = myself;
-        strcpy(msg.note, input);
+        printf("(type = %d) %s\n",msg.type,msg.note);
 
         send_to_server(msg);
     }

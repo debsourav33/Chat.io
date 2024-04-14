@@ -86,7 +86,8 @@ void* receive_from_server(void* arg)
     // get the message from client
     Message msg;
     read(client_socket, &msg, sizeof(Message));
-
+    
+    printf("Received from server:  %s: (type = %d) %s %s\n",msg.chat_node.name,msg.type,msg.note,msg.chat_node.ip);
     switch (msg.type) {
         case JOINING:
             // print joining message for the participant

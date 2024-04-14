@@ -1,4 +1,5 @@
 #include "client_handler.h"
+#include "chat_participants.h"
 
 #include <arpa/inet.h>
 #include <fcntl.h>
@@ -13,6 +14,10 @@
 #include <syslog.h>
 
 #define SERVER_PORT 1357
+
+ChatNodeList nodes;
+
+void* broadcast(ChatNode node, Message msg);
 
 void handle_clients()
 {   
@@ -65,7 +70,6 @@ void handle_clients()
     while (1)
     {   
         int x = 15;
-        printf("Square of %d is retrieved from chatnode to be %d\n",x,get_square(x));
         puts("Waiting for a client");
         // accept connection to client
         int client_socket = accept(server_socket, NULL, NULL);
@@ -104,12 +108,20 @@ void* talk_to_client(void* arg)
     Note note;
     strcpy(note, msg.note);
 
+
+    printf("%s: (type = %d) %s %s\n",name,msg.type,note,msg.chat_node.ip);
+
+    ChatNode node;
+
     switch (msg.type) {
         case JOIN:
-            // send JOINING message to all other participants
+            node = get_participant_from_list(&nodes, msg);
+            if(node.port == -1)  add_participant_to_list(&nodes, msg.chat_node); //only add participant if it's not joined already
             break;
         case LEAVE:
-            // send LEAVING message to all other participants
+            node = get_participant_from_list(&nodes, msg);
+            //if(node.port != -1)  remove_from
+            break;
         case SHUTDOWN:
             // send LEAVING message to all other participants
             break;
@@ -117,12 +129,42 @@ void* talk_to_client(void* arg)
             // send SHUTDOWN message to all other participants
             break;
         case NOTE:
-            
-            printf("%s: %s\n",name,note);
+            node = get_participant_from_list(&nodes, msg);
+            //if(node.port==-1)  printf("Not listed in participants\n");  else  printf("Already joined node: {%s}\n",node.name);
+
+            ChatNodeListElement* curr = nodes.head;
+            while(curr != NULL){
+                broadcast(curr->node, msg);
+                curr = curr->next;
+            }
+
             break;
-       
     }
 
 
     pthread_exit(NULL);
+}
+
+
+void* broadcast(ChatNode node, Message msg){
+    //ChatNode node  = *((ChatNode*) arg);
+    int client_socket;                  // client side socket
+    struct sockaddr_in client_address;  // client socket naming struct
+    char c;
+
+    // create an unnamed socket, and then name it
+    client_socket = socket(AF_INET, SOCK_STREAM, 0);
+    // create addr struct
+    client_address.sin_family = AF_INET;
+    client_address.sin_addr.s_addr = inet_addr(node.ip);
+    client_address.sin_port = htons(node.port);
+    
+    // connect to server socket of the client
+    if (connect(client_socket, (struct sockaddr *)&client_address, sizeof(client_address)) == -1) {
+        perror("Error connecting to server!\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    //send the message object to the server
+    write(client_socket, &msg, sizeof(Message));
 }

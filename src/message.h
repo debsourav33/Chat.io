@@ -22,7 +22,7 @@ typedef struct message_struct{
 } Message;
 
 //parses message type and note from the given input
-Message parse(char* input);
+Message parse_message(char* input);
 
 
 #endif //MESSAGE_H
