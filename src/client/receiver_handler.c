@@ -1,5 +1,5 @@
 #include "receiver_handler.h"
-
+#include "../text_color.h"
 
 #define SERVER_PORT 7531
 
@@ -56,7 +56,7 @@ void* handle_receive(void *arg)
         
         // accept connection to client
         int client_socket = accept(server_socket, NULL, NULL);
-        printf("\nServer with PID %d: accepted client\n", getpid());
+        //printf("\nServer with PID %d: accepted client\n", getpid());
 
         // create thread to handle the client's request
         // note that this is a naive approach, i.e. there are race conditions
@@ -86,19 +86,31 @@ void* receive_from_server(void* arg)
     // get the message from client
     Message msg;
     read(client_socket, &msg, sizeof(Message));
+
+    printf("Incoming message type: %d\n",msg.type);
     
-    printf("Received from server:  %s: (type = %d) %s %s\n",msg.chat_node.name,msg.type,msg.note,msg.chat_node.ip);
+    //printf("Received from server:  %s: (type = %d) %s %s\n",msg.chat_node.name,msg.type,msg.note,msg.chat_node.ip);
     switch (msg.type) {
         case JOINING:
             // print joining message for the participant
+            printf("%s%s joined%s\n",JOINED_COLOR,msg.chat_node.name,RESET_COLOR);
             break;
         case LEFT:
             // print leaving message for the participant
+            puts("Leaving");
+            printf("%s%s left%s\n",LEFT_COLOR,msg.chat_node.name,RESET_COLOR);
+            break;
+        case SHUTDOWN:
+            // print a termination message and terminate the client
+            puts("Shutting down");
+            exit(EXIT_SUCCESS);
+            break;
         case SHUTDOWN_ALL:
             // print a termination message and terminate the client
             break;
         case NOTE:
-            // get the note and sender's name and print the note + sender's names 
+            // get the note and sender's name and print the note + sender's names
+            printf("%s%s: %s%s\n",NOTE_COLOR,msg.chat_node.name,msg.note,RESET_COLOR);
             break;
     }
 

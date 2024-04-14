@@ -17,7 +17,7 @@
 
 ChatNodeList nodes;
 
-void* broadcast(ChatNode node, Message msg);
+void* broadcast(Message msg);
 
 void handle_clients()
 {   
@@ -116,28 +116,56 @@ void* talk_to_client(void* arg)
     switch (msg.type) {
         case JOIN:
             node = get_participant_from_list(&nodes, msg);
-            if(node.port == -1)  add_participant_to_list(&nodes, msg.chat_node); //only add participant if it's not joined already
+            
+            //don't add existing participants again
+            if(node.port != -1){
+                printf("%s already joined\n",msg.chat_node.name);
+                break;
+            }  
+
+            printf("%s has joined\n",msg.chat_node.name);
+            
+            add_participant_to_list(&nodes, msg.chat_node);
+            msg.type = JOINING; //this person is joining the chat
+            broadcast(msg);
             break;
         case LEAVE:
             node = get_participant_from_list(&nodes, msg);
-            //if(node.port != -1)  remove_from
+            //don't add existing participants again
+            if(node.port == -1){
+                printf("%s has not joined\n",msg.chat_node.name);
+                break;
+            }  
+
+            printf("%s has left\n",msg.chat_node.name);
+            
+            msg.type = LEFT;
+            broadcast(msg);
+
+            remove_participant(&nodes, node);
             break;
         case SHUTDOWN:
             // send LEAVING message to all other participants
             break;
         case SHUTDOWN_ALL:
             // send SHUTDOWN message to all other participants
+            msg.type = SHUTDOWN;
+
+            puts("Shut down all");
+            broadcast(msg);
+            remove_all(&nodes); //remove all participants
+
             break;
         case NOTE:
             node = get_participant_from_list(&nodes, msg);
-            //if(node.port==-1)  printf("Not listed in participants\n");  else  printf("Already joined node: {%s}\n",node.name);
+            if(node.port == -1){
+                printf("%s has not joined\n",msg.chat_node.name);
+                break;
+            }  
 
-            ChatNodeListElement* curr = nodes.head;
-            while(curr != NULL){
-                broadcast(curr->node, msg);
-                curr = curr->next;
-            }
-
+            printf("Already joined node: {%s}\n",node.name);
+            broadcast(msg);
+            
             break;
     }
 
@@ -145,8 +173,7 @@ void* talk_to_client(void* arg)
     pthread_exit(NULL);
 }
 
-
-void* broadcast(ChatNode node, Message msg){
+void send_message(ChatNode node, Message msg){
     //ChatNode node  = *((ChatNode*) arg);
     int client_socket;                  // client side socket
     struct sockaddr_in client_address;  // client socket naming struct
@@ -168,3 +195,13 @@ void* broadcast(ChatNode node, Message msg){
     //send the message object to the server
     write(client_socket, &msg, sizeof(Message));
 }
+
+//send to all participants
+void* broadcast(Message msg){
+    ChatNodeListElement* curr = nodes.head;
+    while(curr != NULL){
+        send_message(curr->node, msg);
+        curr = curr->next;
+    }
+}
+

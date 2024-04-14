@@ -37,7 +37,6 @@ Message parse_message(char* str){
     get_prefix(str, prefix); //gets the str until a space or new line found
     char *suffix = strchr(str, ' ') + 1; //returns the pointer to the first occurane of ' '
 
-    puts("asd");
     //if(strlen(prefix))  printf("%s-%s\n",prefix,suffix);
 
     //suffix will be the note portion, unless the entire message is note

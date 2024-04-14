@@ -7,5 +7,7 @@
 
 ChatNode get_participant_from_list(ChatNodeList* list, Message msg);
 void add_participant_to_list(ChatNodeList* list, ChatNode node);
+void remove_participant(ChatNodeList* list, ChatNode node);
+void remove_all(ChatNodeList* list);
 
 #endif

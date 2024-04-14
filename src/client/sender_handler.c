@@ -41,7 +41,7 @@ void* handle_sender(void* arg){
         
         Message msg = parse_message(input);
         msg.chat_node = myself;
-        printf("(type = %d) %s\n",msg.type,msg.note);
+        //printf("(type = %d) %s\n",msg.type,msg.note);
 
         send_to_server(msg);
     }
@@ -57,6 +57,7 @@ void get_user_input(char* input){
     //use gets() or other scan function to get input from user
     puts("Type your message: ");
     fgets(input, 256, stdin);
+    input[strlen(input)-1] = '\0'; //fgets get the newline too -> trim it
 }
 
 

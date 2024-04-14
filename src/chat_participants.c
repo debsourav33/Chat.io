@@ -35,3 +35,32 @@ void add_participant_to_list(ChatNodeList* list, ChatNode node){
     list->tail = list->tail->next;
 }
 
+//node must be present in list
+void remove_participant(ChatNodeList* list, ChatNode node){
+    //head case
+    if(strcmp(list->head->node.ip, node.ip) == 0) {
+        
+        if(list->head == list->tail){
+            list->head = list->tail = NULL;
+        }
+        else{
+            list->head = list->head -> next;
+        }
+        return;
+    }
+
+    //not head case
+    ChatNodeListElement* curr = list->head;
+    while(curr->next != NULL){
+        if(strcmp(curr->next->node.ip, node.ip) == 0){
+            curr->next = curr->next->next;
+            return;
+        }
+        curr = curr -> next;
+    }
+}
+
+void remove_all(ChatNodeList* list){
+    list->head = list->tail = NULL;
+}
+
