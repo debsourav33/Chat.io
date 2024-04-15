@@ -90,4 +90,11 @@ void send_to_server(Message msg){
     
     //send the message object to the server
     write(client_socket, &msg, sizeof(Message));
+
+
+    //special case - if it's a shutdown message, then we don't wait for server response, we sleep 2 second and terminate
+    if(msg.type == SHUTDOWN){
+        sleep(2);
+        exit(EXIT_SUCCESS);
+    }
 }

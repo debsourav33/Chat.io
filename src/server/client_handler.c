@@ -130,6 +130,7 @@ void* talk_to_client(void* arg)
             broadcast(msg);
             break;
         case LEAVE:
+        case SHUTDOWN:
             node = get_participant_from_list(&nodes, msg);
             //don't add existing participants again
             if(node.port == -1){
@@ -143,9 +144,6 @@ void* talk_to_client(void* arg)
             broadcast(msg);
 
             remove_participant(&nodes, node);
-            break;
-        case SHUTDOWN:
-            // send LEAVING message to all other participants
             break;
         case SHUTDOWN_ALL:
             // send SHUTDOWN message to all other participants
