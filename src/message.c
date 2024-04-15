@@ -35,30 +35,23 @@ Message parse_message(char* str){
 
     char prefix[256];
     get_prefix(str, prefix); //gets the str until a space or new line found
-    char *suffix = strchr(str, ' ') + 1; //returns the pointer to the first occurane of ' '
-
-    //if(strlen(prefix))  printf("%s-%s\n",prefix,suffix);
+    //char *suffix = strchr(str, ' ') + 1; //returns the pointer to the first occurane of ' '
+    
+    printf("p = %s\n",prefix);
+    //printf("s = %s\n",suffix);
 
     //suffix will be the note portion, unless the entire message is note
     if(strcmp(prefix, JOIN_STR) == 0){
         msg.type = JOIN;
-        
-        strcpy(msg.note, suffix);
     }
     else if(strcmp(prefix, LEAVE_STR) == 0){
         msg.type = LEAVE;
-        
-        strcpy(msg.note, suffix);
     }
     else if(strcmp(prefix, SHUTDOWN_STR) == 0){
         msg.type = SHUTDOWN;
-        
-        strcpy(msg.note, suffix);
     }
     else if(strcmp(prefix, SHUTDOWN_ALL_STR) == 0){
         msg.type = SHUTDOWN_ALL;
-        
-        strcpy(msg.note, suffix);
     }
     else{ //else the entire message is a note
         msg.type = NOTE;        
