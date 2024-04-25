@@ -87,7 +87,7 @@ void* receive_from_server(void* arg)
     Message msg;
     read(client_socket, &msg, sizeof(Message));
 
-    printf("Incoming message type: %d\n",msg.type);
+    //printf("Incoming message type: %d\n",msg.type);
     
     //printf("Received from server:  %s: (type = %d) %s %s\n",msg.chat_node.name,msg.type,msg.note,msg.chat_node.ip);
     switch (msg.type) {

@@ -132,7 +132,8 @@ void* talk_to_client(void* arg)
         case LEAVE:
         case SHUTDOWN:
             node = get_participant_from_list(&nodes, msg);
-            //don't add existing participants again
+            
+            //if user not joined, they can't leave/shutdown
             if(node.port == -1){
                 printf("%s has not joined\n",msg.chat_node.name);
                 break;
@@ -155,7 +156,10 @@ void* talk_to_client(void* arg)
 
             break;
         case NOTE:
+            
             node = get_participant_from_list(&nodes, msg);
+
+            //if not joined, discard the note
             if(node.port == -1){
                 printf("%s has not joined\n",msg.chat_node.name);
                 break;
@@ -164,6 +168,16 @@ void* talk_to_client(void* arg)
             printf("Already joined node: {%s}\n",node.name);
             broadcast(msg);
             
+            break;
+        case IS_CONNECTED:
+            //client wants to know if it has already joined
+            node = get_participant_from_list(&nodes, msg);
+            
+            Message reply;
+            if(node.port != -1)  reply.type = JOIN; //if connected, reply message type is JOIN
+            else  reply.type = LEAVE; //else reply message type is LEAVE
+
+            write(client_socket, &reply, sizeof(Message));
             break;
     }
 
@@ -198,6 +212,10 @@ void send_message(ChatNode node, Message msg){
 void* broadcast(Message msg){
     ChatNodeListElement* curr = nodes.head;
     while(curr != NULL){
+        
+        //don't send the message to the owner himself
+        //if(strcmp(curr->node.ip, msg.chat_node.ip) == 0)  continue;
+        
         send_message(curr->node, msg);
         curr = curr->next;
     }

@@ -21,9 +21,9 @@
 
 void get_user_input(char* input);
     
-bool verify(Message msg, int current_status);
+bool verify(Message msg);
 
-void send_to_server(Message msg);
+int send_to_server(Message msg);
 void* handle_sender(void* arg);
 
 #endif

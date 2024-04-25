@@ -1,15 +1,6 @@
 #include "message.h"
 #include<stdio.h>
 
-
-#define JOIN 1
-#define JOINING 2
-#define LEAVE 3
-#define LEFT 4
-#define SHUTDOWN 5
-#define SHUTDOWN_ALL 6
-#define NOTE 7
-
 const char *JOIN_STR = "JOIN";
 const char *LEAVE_STR = "LEAVE";
 const char *SHUTDOWN_STR = "SHUTDOWN";
@@ -37,7 +28,7 @@ Message parse_message(char* str){
     get_prefix(str, prefix); //gets the str until a space or new line found
     //char *suffix = strchr(str, ' ') + 1; //returns the pointer to the first occurane of ' '
     
-    printf("p = %s\n",prefix);
+    //printf("p = %s\n",prefix);
     //printf("s = %s\n",suffix);
 
     //suffix will be the note portion, unless the entire message is note
