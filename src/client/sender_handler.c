@@ -159,7 +159,7 @@ int send_to_server(Message msg){
         Message reply;
         read(client_socket, &reply, sizeof(Message));
 
-        printf("Server's state reply: %d\n",reply.type);
+        //printf("Server's state reply: %d\n",reply.type);
         if(reply.type == JOIN)  return JOINED_STATE;
         return NOT_JOINED_STATE;
     }

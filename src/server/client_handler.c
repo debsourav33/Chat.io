@@ -19,6 +19,8 @@ ChatNodeList nodes;
 
 void* broadcast(Message msg);
 
+pthread_mutex_t client_lock; 
+
 void handle_clients()
 {   
     int server_socket;                 // descriptor of server socket
@@ -80,6 +82,8 @@ void handle_clients()
         // for now this is okay, assuming low load
        pthread_t thread;
        int ret = pthread_create(&thread, NULL, talk_to_client, (void*) &client_socket);
+       pthread_mutex_lock(&client_lock); //handle race condition for client_socket read
+
        if(ret != 0){
         printf("Error creating pthread");
         exit(EXIT_FAILURE);
@@ -99,6 +103,7 @@ void handle_clients()
 void* talk_to_client(void* arg) 
 {
     int client_socket = *((int*)arg);   // the socket connected to the client
+    pthread_mutex_unlock(&client_lock); //unlock client-socket read mutex
 
     // get the message from client
     Message msg;
@@ -140,11 +145,13 @@ void* talk_to_client(void* arg)
             }  
 
             printf("%s has left\n",msg.chat_node.name);
+
             
             msg.type = LEFT;
             broadcast(msg);
 
             remove_participant(&nodes, node);
+
             break;
         case SHUTDOWN_ALL:
             // send SHUTDOWN message to all other participants
