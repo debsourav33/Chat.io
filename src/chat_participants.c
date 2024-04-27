@@ -67,8 +67,16 @@ void remove_participant(ChatNodeList* list, ChatNode node){
     //node != head case
     ChatNodeListElement* curr = list->head;
     while(curr->next != NULL){
-        if(strcmp(curr->next->node.ip, node.ip) == 0){
-            curr->next = curr->next->next;
+        if(strcmp(curr->next->node.ip, node.ip) == 0){ //the next node is to remove!
+            //tail remove case
+            if(curr->next == list->tail){
+                list->tail = curr;
+                list->tail->next = NULL;
+            }
+            else{ //not tail case
+                curr->next = curr->next->next;
+            }
+
             //must unlock mutex before every return
             pthread_mutex_unlock(&list_mutex);
             return;
@@ -91,3 +99,11 @@ void remove_all(ChatNodeList* list){
     pthread_mutex_unlock(&list_mutex);
 }
 
+void print_participants(ChatNodeList* list){
+    ChatNodeListElement* curr = list->head;
+    while(curr != NULL){
+       printf("%s (%s)",curr->node.name,curr->node.ip);
+       curr = curr -> next;
+    }
+    puts("");
+}

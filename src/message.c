@@ -21,13 +21,20 @@ void get_prefix(char* str, char* s){
 
 }
 
+//utility function to turn all chars to capital letters
+void capitalize(char* str){
+    for(int i=0;i<strlen(str);i++){
+        if(str[i]>='a' && str[i]<='z')  str[i] -= 32;
+    }
+}
+
 Message parse_message(char* str){
     Message msg;
 
     char prefix[256];
     get_prefix(str, prefix); //gets the str until a space or new line found
-    //char *suffix = strchr(str, ' ') + 1; //returns the pointer to the first occurane of ' '
-    
+    capitalize(prefix); //so that 'Join' and 'JOIN' both can be accepted
+
     //printf("p = %s\n",prefix);
     //printf("s = %s\n",suffix);
 

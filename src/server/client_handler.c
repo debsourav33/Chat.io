@@ -108,6 +108,8 @@ void* talk_to_client(void* arg)
     // get the message from client
     Message msg;
     read(client_socket, &msg, sizeof(Message));
+    
+    print_participants(&nodes);
 
     char *name = msg.chat_node.name;
     Note note;
@@ -207,8 +209,8 @@ void send_message(ChatNode node, Message msg){
     
     // connect to server socket of the client
     if (connect(client_socket, (struct sockaddr *)&client_address, sizeof(client_address)) == -1) {
-        perror("Error connecting to server!\n");
-        exit(EXIT_FAILURE);
+        printf("Error connecting to client node for %s!\n",node.name);
+        return;
     }
     
     //send the message object to the server
@@ -218,12 +220,10 @@ void send_message(ChatNode node, Message msg){
 //send to all participants
 void* broadcast(Message msg){
     ChatNodeListElement* curr = nodes.head;
-    while(curr != NULL){
-        
+    while(curr != NULL){        
         //don't send the message to the owner himself
-        //if(strcmp(curr->node.ip, msg.chat_node.ip) == 0)  continue;
-        
-        send_message(curr->node, msg);
+        if(strcmp(curr->node.ip, msg.chat_node.ip) != 0)
+            send_message(curr->node, msg);
         curr = curr->next;
     }
 }

@@ -166,7 +166,7 @@ int send_to_server(Message msg){
 
 
     //special case - if it's a shutdown message, then we don't wait for server response, we sleep 2 second and terminate
-    if(msg.type == SHUTDOWN){
+    if(msg.type == SHUTDOWN || msg.type == SHUTDOWN_ALL){
         sleep(2);
         exit(EXIT_SUCCESS);
     }

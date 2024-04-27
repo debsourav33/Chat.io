@@ -97,16 +97,14 @@ void* receive_from_server(void* arg)
             break;
         case LEFT:
             // print leaving message for the participant
-            puts("Leaving");
+            //puts("Leaving");
             printf("%s%s left%s\n",LEFT_COLOR,msg.chat_node.name,RESET_COLOR);
             break;
+        case SHUTDOWN_ALL:
         case SHUTDOWN:
             // print a termination message and terminate the client
-            puts("Shutting down");
+            //puts("Shutting down");
             exit(EXIT_SUCCESS);
-            break;
-        case SHUTDOWN_ALL:
-            // print a termination message and terminate the client
             break;
         case NOTE:
             // get the note and sender's name and print the note + sender's names
