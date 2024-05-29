@@ -1,14 +1,17 @@
-Steps:
+## How to run:
 
-1. Naviagate to project/ directory
-2. Edit the info.properties, put the current host's ip, user name, port and server ip & server port
-3. To run the server side application, first build using the make file make_server.mk
-   $ make -f make_server.mk 
-   Then run the executable
-   $ ./build_server/chat_server 
-4. To run the client side application, first build using the make file make_client.mk
-   $ make -f make_client.mk 
-   Then run the executable
-   $ ./build_client/chat_client
-5. Start sending (and receiving!) messages (join first using 'JOIN') command
+- Naviagate to `project/` directory
+- Edit the `info.properties`, put the
+  + Current host's IP
+  + Current host's port
+  + Current host's name
+  + Server IP
+  + Server port
+- To run the server side application, 
+   * Build the server: `$ make -f make_server.mk`
+   * Start the server: `$ ./build_server/chat_server` 
+- To run the client side application, 
+   * Build the client: `$ make -f make_client.mk` 
+   * Start the client: `$ ./build_client/chat_client`
+- Start sending (and receiving!) messages (join first using `'JOIN'`) command
 
