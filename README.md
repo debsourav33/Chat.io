@@ -13,5 +13,5 @@
 - To run the client side application, 
    * Build the client: `$ make -f make_client.mk` 
    * Start the client: `$ ./build_client/chat_client`
-- Start sending (and receiving!) messages (join first using `'JOIN'`) command
+- Start sending (and receiving!) messages (make sure to join first using the `'JOIN'` command)
 
